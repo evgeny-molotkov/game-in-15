@@ -28,6 +28,11 @@ export class GamePageComponent implements OnInit {
         private route: ActivatedRoute,
         private snackService: SnackService
     ) {
+        this.movePos.push(new Position(1, 0));
+        this.movePos.push(new Position(0, 1));
+        this.movePos.push(new Position(-1, 0));
+        this.movePos.push(new Position(0, -1));
+
         this.dominoesCount = +this.route.snapshot.paramMap.get('dominoesCount');
 
         this.fieldSize = this.getFieldSize(this.dominoesCount);
@@ -37,18 +42,17 @@ export class GamePageComponent implements OnInit {
 
         this.querySubscription = route.queryParams.subscribe(
             (queryParam: any) => {
-                this.shakeMoves = queryParam['moves'];
+                this.shakeMoves = queryParam['shakeMoves'];
+                if (isNaN(this.shakeMoves)) {
+                    this.shakeMoves = 1;
+                }
+                this.initDominoes();
+                this.shakeGameField(this.shakeMoves);
             }
         );
-
-        this.movePos.push(new Position(1, 0));
-        this.movePos.push(new Position(0, 1));
-        this.movePos.push(new Position(-1, 0));
-        this.movePos.push(new Position(0, -1));
     }
 
     ngOnInit() {
-        this.initDominoes();
     }
 
     getFieldSize(count = 1): number {
@@ -120,6 +124,34 @@ export class GamePageComponent implements OnInit {
         }
 
         return true;
+    }
+
+    shakeGameField(count: number) {
+        let prevPos = this.emptyDominoe.Position;
+        for (let i = 0; i < count; i++) {
+            for (let j = 0; j < 20; j++) {
+                const rand = Math.floor(Math.random() * 4);
+                const xPos = this.getPositionX(this.emptyDominoe.Position) + this.movePos[rand].X;
+                const yPos = this.getPositionY(this.emptyDominoe.Position) + this.movePos[rand].Y ;
+                if ( (xPos < 0) || (xPos >= this.fieldSize) ) {
+                    continue;
+                }
+                if ( (yPos < 0) || (yPos >= this.fieldSize) ) {
+                    continue;
+                }
+                const position = xPos + yPos * this.fieldSize;
+                if ( (position >= 0) && (position < this.fieldSize * this.fieldSize) && prevPos !== position) {
+                    prevPos = this.emptyDominoe.Position;
+                    for (let k = 0; k < this.dominoes.length; k++) {
+                        if (this.dominoes[k].Position === position) {
+                            this.dominoes[k].Position = this.emptyDominoe.Position;
+                        }
+                    }
+                    this.emptyDominoe.Position = position;
+                    break;
+                }
+            }
+        }
     }
 
 }

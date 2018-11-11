@@ -7,11 +7,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WelcomePageComponent implements OnInit {
 
-    dominoesCount: number;
+    dominoesCount = 15;
     dominoes = [3, 8, 15, 24, 48];
+    shakeMoves = 3;
 
     constructor() {
-        this.dominoesCount = 15;
     }
 
     ngOnInit() {
