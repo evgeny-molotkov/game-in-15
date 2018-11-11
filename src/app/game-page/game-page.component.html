@@ -1,0 +1,22 @@
+<mat-card class="card">
+    <mat-card-content>
+        <div class="field" 
+             [style.width.px]="getFieldSizePx(fieldSize)" 
+             [style.height.px]="getFieldSizePx(fieldSize)">
+             
+            <button *ngFor="let donimoe of dominoes" 
+                    mat-stroked-button 
+                    class="dominoe-button" 
+                    [class.invisible]="donimoe.Value ? false : true"
+                    [ngStyle]="{'transform':'translate3d('+getXDeltaPx(donimoe.Position)+'px, '+getYDeltaPx(donimoe.Position)+'px, 0px)'}"
+                    (click)="onClickDominoe(donimoe)">
+                {{ donimoe.Value }}
+            </button>
+        </div>
+    </mat-card-content>
+</mat-card>
+<a routerLink="/welcome">
+    <button mat-raised-button color="primary">
+        Начать игру сначала
+    </button>
+</a>
